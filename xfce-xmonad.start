@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+startxfce4 &
+sleep 2
+#systemd-cat -t xfxm /home/bradrn/.config/xmonad/xmonad-x86_64-linux --replace
+exec /home/bradrn/.xmonad/xmonad-x86_64-linux --replace
+#sleep 2
+#xfce4-panel --restart

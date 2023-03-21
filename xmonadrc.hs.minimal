@@ -1,0 +1,9 @@
+module Main (main) where
+
+import XMonad
+import XMonad.Config.Xfce
+
+main :: IO ()
+main = xmonad def
+    { modMask = mod4Mask
+    }

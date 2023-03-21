@@ -1,0 +1,29 @@
+#! /bin/sh -eu
+
+# script from https://github.com/xmonad/xmonad-testing/blob/master/build-scripts/build-with-cabal.sh
+
+# Your source directory. Default is the config dir, if it can be found.
+SRC_DIR=/home/bradrn/.xmonad
+
+# Executable name, from the executable stanza of your cabal file.
+# The script will try to guess it if not specified.
+EXE_NAME=xmonadrc
+
+##############################################################################
+
+# config
+
+output="$1"
+
+cd "$SRC_DIR"
+
+d="$(dirname "$output")"
+f="$(basename "$output")"
+
+# add paths for cabal, ghc etc.
+[ -f "/home/bradrn/.ghcup/env" ] && source "/home/bradrn/.ghcup/env"
+
+cabal install exe:"$EXE_NAME" --enable-executable-stripping --enable-optimization=2 --installdir="$d" --overwrite-policy=always --install-method=copy
+
+ln -sf "$EXE_NAME" "$output"
+ln -sf $(realpath "$EXE_NAME") ~/.cabal/bin/xmonad  # to get 'xmonad' executable in PATH for live reload
