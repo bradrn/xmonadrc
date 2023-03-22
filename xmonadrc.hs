@@ -3,6 +3,7 @@
 import XMonad
 
 import XMonad.Actions.Volume
+import XMonad.Actions.PhysicalScreens
 import XMonad.Config.Xfce
 import XMonad.Hooks.ShowWName (flashName)
 import XMonad.Layout.DragPane
@@ -88,12 +89,12 @@ main = xmonad $ base
         -- | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
         -- , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
         ++
-        -- adapted from XMonad source:
-        -- for my setup need to switch w/e
+        -- adapted from XMonad.Actions.PhysicalScreens doumentation:
+        -- for my setup need to order by physical screen arrangement
         -- also a/s/d easier for me than w/e/r
-        [((m .|. modMask, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_s, xK_a, xK_d] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+        [((m .|. modMask, key), f sc)
+        | (key, sc) <- zip [xK_a, xK_s, xK_d] [0..]
+        , (f, m) <- [(viewScreen def, 0), (sendToScreen def, shiftMask)]]
 
         -- [ ((modMask, xK_q), spawn
         --     "/home/bradrn/.config/xmonad/xmonad-x86_64-linux --recompile && /home/bradrn/.config/xmonad/xmonad-x86_64-linux --restart")
