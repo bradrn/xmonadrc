@@ -3,7 +3,7 @@ name:               xmonadrc
 version:            0.1.0.0
 synopsis:
 homepage:
-license:            NONE
+license:            BSD-3-Clause
 author:
 maintainer:
 
