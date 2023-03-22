@@ -174,9 +174,10 @@ instance Eq a => DecorationStyle TabbedImageButtonDecoration a where
     decorationAfterDraggingHook _ (mainw, _) decoWin = focus mainw >> handleScreenCrossing mainw decoWin >> return ()
 
     pureDecoration TabbedImageButton wt ht _ s wrs (w,r@(Rectangle x y wh hh))
-        = if numWindows > 1
-          then Just upperTab
-          else Nothing
+        -- = if numWindows > 1
+        --   then Just upperTab
+        --   else Nothing
+        = Just upperTab
         where ws = filter (`elem` map fst (filter ((==r) . snd) wrs)) (S.integrate s)
               loc k h i = k + fi ((h * fi i) `div` max 1 (fi $ length ws))
               esize k h = fi $ maybe k (\i -> loc k h (i+1) - loc k h i) $ w `elemIndex` ws
