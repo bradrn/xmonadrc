@@ -119,12 +119,24 @@ defaultThemeWithImageButtons = def
         [ -- (menuButton, CenterLeft 3),
           (closeButton, CenterRight 3)
         ]
-    , fontName = "xft:monospace-20"
+    --, fontName = "xft:monospace-20"
     -- , decoHeight = 30
-    , activeColor         = "#999999"
-    , inactiveColor       = "#666666"
-    , activeBorderColor   = "#999999"
-    , inactiveBorderColor = "#666666"
+    --, activeColor         = "#999999"
+    --, inactiveColor       = "#666666"
+    --, activeBorderColor   = "#999999"
+    --, inactiveBorderColor = "#666666"
+
+    -- adapted from XMonad.Util.Themes.smallClean
+      , fontName            = "xft:Cantarell:bold:size=22"
+      , activeColor         = "#8a999e"
+      , inactiveColor       = "#545d75"
+      , activeBorderColor   = "#8a999e"
+      , inactiveBorderColor = "#545d75"
+      --, activeBorderColor   = "white"
+      --, inactiveBorderColor = "grey"
+      , activeTextColor     = "white"
+      , inactiveTextColor   = "grey"
+      , decoHeight          = 30
     }
 
 imageButtonDeco :: (Eq a, Shrinker s) => s -> Theme

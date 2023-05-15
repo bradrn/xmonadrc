@@ -4,16 +4,21 @@ import XMonad
 
 import XMonad.Actions.Volume
 import XMonad.Actions.PhysicalScreens
+import XMonad.Actions.RotSlaves
 import XMonad.Config.Xfce
+import XMonad.Hooks.ManageHelpers (doRectFloat)
 import XMonad.Hooks.ShowWName (flashName)
-import XMonad.Layout.DragPane
 import XMonad.Layout.Gaps
+import XMonad.Layout.NoBorders
+import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ToggleLayouts
+import XMonad.Layout.TwoPane
 import qualified XMonad.StackSet as W
 
 import MyImageButtonDecoration
 
+import Data.Ratio
 import System.Exit
 
 import Data.Map.Strict (fromList)
@@ -22,47 +27,44 @@ main :: IO ()
 main = xmonad $ base
     { modMask = mod4Mask
     --, focusedBorderColor = "#444444"
-    , normalBorderColor  = "#666666"
-    , focusedBorderColor = "#999999"
+    --, normalBorderColor  = "#666666"
+    --, focusedBorderColor = "#999999"
+    --, focusedBorderColor         = "#dfdcd8"
+    --, normalBorderColor       = "#f6f5f4"
+    , focusedBorderColor   = activeColor defaultThemeWithImageButtons
+    , normalBorderColor    = inactiveColor defaultThemeWithImageButtons
     , borderWidth = 10
     , layoutHook = layout
     , keys = overrideKeys <> keys base
---    , manageHook = composeAll
---        [ manageHook base
---        --, className =? "Wrapper-2.0" --> doIgnore
---        --, appName =? "full-history-search" --> doFloat
---        ]
+    , manageHook = composeAll
+        [ manageHook base
+        , className =? "Xfce4-appfinder" --> doRectFloat (W.RationalRect (1%4) (1%4) (1%2) (1%2))
+        , className =? "Pavucontrol" --> doFloat
+        , className =? "Nvpy" --> doFloat
+        , className =? "Xfce4-notifyd" --> doIgnore
+        --, className =? "Wrapper-2.0" --> doIgnore
+        --, appName =? "full-history-search" --> doFloat
+        ]
     }
   where
     base = xfceConfig
 
     -- adapted from base
-    layout = xfcePanelGap $
-        imageButtonTabbed shrinkText defaultThemeWithImageButtons
+    layout = desktopLayoutModifiers $
+        toggleLayouts
+            (noBorders Full)
+            (imageButtonTabbed shrinkText defaultThemeWithImageButtons)
         ||| addDeco
-            (   toggleLayouts (tiledrag Vertical)   tiled
-            ||| toggleLayouts (tiledrag Horizontal) (Mirror tiled)
+            (   toggleLayouts tiledrag tiled
+            ||| toggleLayouts (Mirror tiledrag) (Mirror tiled)
             )
       where
-        -- hack, see https://wiki.haskell.org/Xmonad/Frequently_asked_questions#Does_xmonad_support_a_statusbar.3F
-        xfcePanelGap = gaps [(D,54)]
-
-        tabtheme :: Theme
-        tabtheme = def
-            { fontName = "xft:monospace-20"
-            , decoHeight = 20
-            , activeColor         = "#999999"
-            , inactiveColor       = "#666666"
-            , activeBorderColor   = "#999999"
-            , inactiveBorderColor = "#666666"
-            }
-
         -- add window titles
         addDeco = imageButtonDeco shrinkText defaultThemeWithImageButtons 
 
         -- default tiling algorithm partitions the screen into two panes
-        tiled   = Tall nmaster delta ratio
-        tiledrag dir = dragPane dir delta ratio
+        tiled    = ResizableTall nmaster delta ratio []
+        tiledrag = TwoPane delta ratio
 
         -- The default number of windows in the master pane
         nmaster = 1
@@ -82,6 +84,12 @@ main = xmonad $ base
         , ((modMask, xK_z), flashName def)
         , ((modMask, xK_x), spawn "/usr/bin/xfce4-panel --restart")
         , ((modMask .|. controlMask, xK_space), sendMessage ToggleLayout)
+        , ((modMask, xK_Tab), rotSlavesUp)
+        , ((modMask, xK_Pause), kill)
+        , ((modMask .|. shiftMask, xK_h), sendMessage MirrorExpand)
+        , ((modMask .|. shiftMask, xK_l), sendMessage MirrorShrink)
+        , ((modMask, xK_v), spawn "gvim")
+        , ((modMask .|. shiftMask, xK_b), spawn "dolphin")
         ]
         -- ++
         -- -- replace greedyView with View in mod-(shift-)n
